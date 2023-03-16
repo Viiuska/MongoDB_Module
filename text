@@ -1,0 +1,87 @@
+//Add a new post in the database
+db.posts.insert({
+    title:'Post one',
+    body:'Body of post one',
+    category:'News',
+    likes: 4,
+    tags: ['news', 'events'],
+    user:{name: 'Pedro Pascal', status:'author'},
+    date:Date()
+})
+
+//Add many new posts in the database
+db.posts.insertMany([{
+    title:'Post two',
+    body:'Body of post one',
+    category:'University',
+    date:Date()
+},
+{
+    title:'Post three',
+    body:'Body of post one',
+    category:'Life',
+    date:Date()
+    }]
+ )
+
+db.posts.find() //Print all in the database
+db.posts.find({category:'News'}) //Print only posts that have category News
+db.posts.find().sort({title: 1}) //Print posts in alphapetical order based on the title
+db.posts.find({category:'News'}).count() //print how many posts has category News
+db.posts.find().limit(2) //Print only two first posts
+
+db.posts.find().forEach(function(doc) {print('Blog Post:'+doc.title)}) //Print each title in the database
+db.posts.findOne({category:'News'}) //print the first post that have have category News
+
+//Update database, overwrite
+db.posts.update({title: 'Post one'},{
+    title:'Post One',
+    body:'New Body of post one',
+    date: Date()
+},{
+    upsert:true
+})
+
+//Update database 
+db.posts.update({title: 'Post two'},{
+    $set:{
+        category:'Technology'
+    }
+})
+
+//Adding likes to post
+db.posts.update({title: 'Post one'}, {$inc:{likes:4}})
+
+//Rename likes to views
+db.posts.update({title: 'Post one'}, {$rename:{likes:'views'}})
+
+//Delete post
+db.posts.deleteOne({title: 'Post three'})
+
+//Adding new things to the post structure
+db.posts.update({title: 'Post one'},{
+    $set:{
+        comments:[{
+            user:'Bella Ramsey',
+            body:'Comment one',
+            date: Date()
+        }]
+    }
+})
+
+//Print post that has comment from specific user
+db.posts.find({comments:{$elemMatch:{user: 'Bella Ramsey'}}}) 
+
+
+//Create index
+db.posts.createIndex({title: 'text'})
+
+//Search function
+db.posts.find({
+    $text:{
+        $search: '\'Post tw\''
+    }
+})
+
+//Print posts that have views greater than 6
+db.posts.find({views: {$gt:6}})
